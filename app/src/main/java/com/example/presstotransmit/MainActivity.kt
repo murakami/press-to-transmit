@@ -3,6 +3,7 @@ package com.example.presstotransmit
 import android.media.audiofx.AcousticEchoCanceler
 import android.media.audiofx.AutomaticGainControl
 import android.media.audiofx.NoiseSuppressor
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -31,6 +32,7 @@ import com.smartwalkie.voicepingsdk.callback.DisconnectCallback
 import com.smartwalkie.voicepingsdk.exception.VoicePingException
 import com.smartwalkie.voicepingsdk.listener.AudioRecorder
 import com.smartwalkie.voicepingsdk.listener.OutgoingTalkCallback
+import com.smartwalkie.voicepingsdk.model.AudioParam
 import com.smartwalkie.voicepingsdk.model.ChannelType
 
 class MainActivity : ComponentActivity(), OutgoingTalkCallback {
@@ -80,7 +82,15 @@ fun PressToTransmit(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     Column(modifier = modifier.padding(12.dp)) {
         Button(
-            onClick = { VoicePing.init(context, "wss://router-lite.voiceping.info") }
+            onClick = {
+                val audioSource = AudioSourceConfig.getSource()
+                val audioParam = AudioParam.Builder()
+                    .setAudioSource(audioSource)
+                    .build()
+                val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
+                Log.d("MainActivity", "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
+                VoicePing.init(context, "wss://router-lite.voiceping.info", audioParam)
+            }
         ) {
             Text("VoicePing.init")
         }
@@ -100,7 +110,7 @@ fun PressToTransmit(modifier: Modifier = Modifier) {
             Text("VoicePing.connect")
         }
         Button(
-            onClick = { VoicePing.startTalking("efgh", ChannelType.PRIVATE, context as OutgoingTalkCallback) }
+            onClick = { VoicePing.startTalking("efgh", ChannelType.PRIVATE, null/*context as OutgoingTalkCallback*/) }
         ) {
             Text("VoicePing.startTalking")
         }

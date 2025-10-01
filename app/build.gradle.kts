@@ -37,6 +37,16 @@ android {
     buildFeatures {
         compose = true
     }
+
+    flavorDimensions += "environment"
+    productFlavors {
+        create("ptt") {
+            applicationId = "com.example.presstotransmit"
+        }
+        create("example") {
+            applicationId = "com.example.Example"
+        }
+    }
 }
 
 dependencies {

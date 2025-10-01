@@ -130,7 +130,7 @@ fun PressToTransmit(
         }
         Button(
             onClick = {
-                VoicePing.connect("TUF-1", "bitz", object : ConnectCallback {
+                VoicePing.connect("demo", "bitz", object : ConnectCallback {
                     override fun onConnected() {
                         Log.d("MainActivity", "onConnected")
                     }
@@ -166,10 +166,13 @@ fun PressToTransmit(
                     .build()
                 val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
                 Log.d("MainActivity", "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
+                Log.d("MainActivity", "call VoicePing.init")
                 VoicePing.init(context, "wss://router-lite.voiceping.info", audioParam)
-                VoicePing.connect("TUF-1", "bitz", object : ConnectCallback {
+                Log.d("MainActivity", "call VoicePing.connect")
+                VoicePing.connect("demo", "bitz", object : ConnectCallback {
                     override fun onConnected() {
                         Log.d("MainActivity", "onConnected")
+                        Log.d("MainActivity", "call VoicePing.startTalking")
                         VoicePing.startTalking(
                             receiverId = "efgh",
                             channelType = ChannelType.PRIVATE,

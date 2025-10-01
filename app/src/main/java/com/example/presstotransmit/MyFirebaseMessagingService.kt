@@ -1,20 +1,50 @@
 package com.example.presstotransmit
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
-import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
-import androidx.core.app.NotificationCompat
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.smartwalkie.voicepingsdk.VoicePing
+import com.smartwalkie.voicepingsdk.callback.ConnectCallback
+import com.smartwalkie.voicepingsdk.exception.VoicePingException
+import com.smartwalkie.voicepingsdk.model.AudioParam
+import com.smartwalkie.voicepingsdk.model.ChannelType
+
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
+
+    fun startTalking() {
+        val audioSource = AudioSourceConfig.getSource()
+        val audioParam = AudioParam.Builder()
+            .setAudioSource(audioSource)
+            .build()
+        val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
+        Log.d("MyFirebaseMessagingService", "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
+        VoicePing.init(this, "wss://router-lite.voiceping.info", audioParam)
+        VoicePing.connect("demo", "bitz", object : ConnectCallback {
+            override fun onConnected() {
+                Log.d("MyFirebaseMessagingService", "onConnected")
+                VoicePing.startTalking(
+                    receiverId = "efgh",
+                    channelType = ChannelType.PRIVATE,
+                    callback = null
+                )
+            }
+
+            override fun onFailed(exception: VoicePingException) {
+                Log.d("MainActivity", "onFailed")
+            }
+        })
+    }
+
+    override fun handleIntent(intent: Intent) {
+        super.handleIntent(intent)
+        if (intent.getExtras() == null) return
+
+        Log.d(TAG, "handleIntent: extras: ${intent.getExtras()}")
+        startTalking()
+    }
 
     /**
      * Called when message is received.
@@ -23,7 +53,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      */
     // [START receive_message]
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d(TAG, "From: ${remoteMessage.from}")
+        Log.d(TAG, "onMessageReceived: From: ${remoteMessage.from}")
 
         if (remoteMessage.data.isNotEmpty()) {
             Log.d(TAG, "Message data payload: ${remoteMessage.data}")
@@ -33,8 +63,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         remoteMessage.notification?.let {
             Log.d(TAG, "Message Notification Body: ${it.body}")
         }
+
+        //startTalking()
     }
     // [END receive_message]
+
+    override fun onDeletedMessages() {
+        Log.d(TAG, "onDeletedMessages")
+        Log.d(TAG, "onDeletedMessages")
+    }
 
     // [START on_new_token]
     /**
@@ -43,7 +80,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      * FCM registration token is initially generated so this is where you would retrieve the token.
      */
     override fun onNewToken(token: String) {
-        Log.d(TAG, "Refreshed token: $token")
+        Log.d(TAG, "onNewToken: Refreshed token: $token")
     }
     // [END on_new_token]
 

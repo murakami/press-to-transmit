@@ -71,6 +71,12 @@ dependencies {
     // Firebase Cloud Messaging
     implementation("com.google.firebase:firebase-messaging")
 
+    // For an optimal experience using FCM, add the Firebase SDK
+    // for Google Analytics. This is recommended, but not required.
+    implementation("com.google.firebase:firebase-analytics")
+
+    implementation("com.google.firebase:firebase-installations:19.0.1")
+
     implementation("androidx.work:work-runtime:2.10.4")
 
     implementation("com.github.SmartWalkieOrg:VoicePing-Walkie-Talkie-AndroidSDK:1.0")

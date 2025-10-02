@@ -77,7 +77,13 @@ dependencies {
 
     implementation("com.google.firebase:firebase-installations:19.0.1")
 
-    implementation("androidx.work:work-runtime:2.10.4")
+    val work_version = "2.10.4"
+    implementation("androidx.work:work-runtime:$work_version") // (Java only)
+    implementation("androidx.work:work-runtime-ktx:$work_version") // Kotlin + coroutines
+    implementation("androidx.work:work-rxjava2:$work_version") // optional - RxJava2 support
+    implementation("androidx.work:work-gcm:$work_version") // optional - GCMNetworkManager support
+    androidTestImplementation("androidx.work:work-testing:$work_version") // optional - Test helpers
+    implementation("androidx.work:work-multiprocess:$work_version") // optional - Multiprocess support
 
     implementation("com.github.SmartWalkieOrg:VoicePing-Walkie-Talkie-AndroidSDK:1.0")
     //implementation("com.squareup.okhttp3:okhttp:3.9.0")

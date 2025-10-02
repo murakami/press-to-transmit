@@ -3,6 +3,7 @@ package com.example.presstotransmit
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -37,7 +38,6 @@ import com.smartwalkie.voicepingsdk.listener.AudioRecorder
 import com.smartwalkie.voicepingsdk.listener.OutgoingTalkCallback
 import com.smartwalkie.voicepingsdk.model.AudioParam
 import com.smartwalkie.voicepingsdk.model.ChannelType
-
 
 class MainActivity : ComponentActivity(), OutgoingTalkCallback {
     private val requestPermissionLauncher =
@@ -87,6 +87,10 @@ class MainActivity : ComponentActivity(), OutgoingTalkCallback {
             Log.d("MainActivity", /*msg*/token)
             Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
         })
+
+        val receiver = MyCancelReceiver()
+        val filter = IntentFilter("com.example.presstotransmit.CANCEL")
+        registerReceiver(receiver, filter)
 
         enableEdgeToEdge()
         setContent {

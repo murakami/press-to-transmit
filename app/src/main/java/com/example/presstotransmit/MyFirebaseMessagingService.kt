@@ -3,6 +3,9 @@ package com.example.presstotransmit
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.smartwalkie.voicepingsdk.VoicePing
@@ -10,7 +13,6 @@ import com.smartwalkie.voicepingsdk.callback.ConnectCallback
 import com.smartwalkie.voicepingsdk.exception.VoicePingException
 import com.smartwalkie.voicepingsdk.model.AudioParam
 import com.smartwalkie.voicepingsdk.model.ChannelType
-
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -43,7 +45,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         if (intent.getExtras() == null) return
 
         Log.d(TAG, "handleIntent: extras: ${intent.getExtras()}")
-        startTalking()
+        //startTalking()
+        val uploadWorkRequest: WorkRequest =
+            OneTimeWorkRequestBuilder<VoicePingWorker>()
+                .build()
+        WorkManager
+            .getInstance(application)
+            .enqueue(uploadWorkRequest)
     }
 
     /**

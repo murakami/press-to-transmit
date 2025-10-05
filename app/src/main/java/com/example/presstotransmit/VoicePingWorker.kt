@@ -37,7 +37,8 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
     override suspend fun doWork(): Result {
         Log.d(TAG, "doWork")
 
-        startTalking()
+        connect()
+        //startTalking()
         setForeground(createForegroundInfo())
         runCatching {
             val done = doneChannel.receive()
@@ -106,6 +107,31 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createChannel() {
         // Create a Notification channel
+    }
+
+    private fun connect() {
+        Log.d(TAG, "connect")
+        val audioSource = AudioSourceConfig.getSource()
+        val audioParam = AudioParam.Builder()
+            .setAudioSource(audioSource)
+            .build()
+        val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
+        Log.d(TAG, "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
+        VoicePing.init(applicationContext, "wss://router-lite.voiceping.info", audioParam)
+        VoicePing.connect("demo", "bitz", object : ConnectCallback {
+            override fun onConnected() {
+                Log.d(TAG, "onConnected")
+            }
+
+            override fun onFailed(exception: VoicePingException) {
+                Log.d(TAG, "onFailed")
+                VoicePing.disconnect(object : DisconnectCallback {
+                    override fun onDisconnected() {
+                        Log.d(TAG, "onDisconnected")
+                    }
+                })
+            }
+        })
     }
 
     private fun startTalking() {

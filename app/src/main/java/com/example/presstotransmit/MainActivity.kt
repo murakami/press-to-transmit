@@ -88,9 +88,11 @@ class MainActivity : ComponentActivity(), OutgoingTalkCallback {
             Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
         })
 
+        /*
         val receiver = MyCancelReceiver()
         val filter = IntentFilter("com.example.presstotransmit.CANCEL")
         registerReceiver(receiver, filter)
+         */
 
         enableEdgeToEdge()
         setContent {

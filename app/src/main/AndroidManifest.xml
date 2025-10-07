@@ -30,6 +30,12 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+    <!--
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    -->
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -71,6 +77,12 @@
             android:name="androidx.work.impl.background.gcm.WorkManagerGcmService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+        -->
+        <!--
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="microphone|connectedDevice"
+            android:exported="false" />
         -->
 
         <!--

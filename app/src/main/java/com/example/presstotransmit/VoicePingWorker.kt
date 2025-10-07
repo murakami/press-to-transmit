@@ -102,7 +102,16 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
             .addAction(android.R.drawable.ic_delete, cancel, intent)
             .build()
 
-        return ForegroundInfo(NOTIFICATION_ID, notification)
+        //return ForegroundInfo(NOTIFICATION_ID, notification)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ForegroundInfo(
+                NOTIFICATION_ID,
+                notification,
+                android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        } else {
+            ForegroundInfo(NOTIFICATION_ID, notification)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

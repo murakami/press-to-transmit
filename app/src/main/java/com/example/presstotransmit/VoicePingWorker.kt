@@ -124,7 +124,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
             NotificationChannel(
                 channelId,
                 channelName,
-                NotificationManager.IMPORTANCE_HIGH,
+                NotificationManager.IMPORTANCE_MAX,
             ),
         )
     }

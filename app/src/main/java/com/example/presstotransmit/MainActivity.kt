@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity(), OutgoingTalkCallback {
                 NotificationChannel(
                     channelId,
                     channelName,
-                    NotificationManager.IMPORTANCE_HIGH,
+                    NotificationManager.IMPORTANCE_MAX,
                 ),
             )
         }

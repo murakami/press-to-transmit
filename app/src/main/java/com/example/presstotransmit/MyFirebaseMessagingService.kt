@@ -44,19 +44,18 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun handleIntent(intent: Intent) {
+        Log.d(TAG, "handleIntent")
         super.handleIntent(intent)
         if (intent.getExtras() == null) return
 
         Log.d(TAG, "handleIntent: extras: ${intent.getExtras()}")
         //startTalking()
-        /*
         val voicePingWorkRequest: WorkRequest =
             OneTimeWorkRequestBuilder<VoicePingWorker>()
                 .build()
         WorkManager
             .getInstance(application)
             .enqueue(voicePingWorkRequest)
-         */
         /*
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -83,6 +82,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     // [START receive_message]
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "onMessageReceived: From: ${remoteMessage.from}")
+        Log.d(TAG, "priority: ${remoteMessage.priority}, original priorigy: ${remoteMessage.originalPriority}")
 
         if (remoteMessage.data.isNotEmpty()) {
             Log.d(TAG, "Message data payload: ${remoteMessage.data}")

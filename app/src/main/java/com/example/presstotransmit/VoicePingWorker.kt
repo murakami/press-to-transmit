@@ -1,5 +1,6 @@
 package com.example.presstotransmit
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
@@ -107,6 +108,16 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createChannel() {
         // Create a Notification channel
+        val channelId = applicationContext.getString(R.string.default_notification_channel_id)
+        val channelName = applicationContext.getString(R.string.default_notification_channel_name)
+        val notificationManager = applicationContext.getSystemService(NotificationManager::class.java)
+        notificationManager?.createNotificationChannel(
+            NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_HIGH,
+            ),
+        )
     }
 
     private fun connect() {

@@ -21,6 +21,10 @@
         android:name="com.google.firebase.messaging.default_notification_icon"
         android:resource="@drawable/ic_stat_ic_notification" />
 
+    <!-- Google Play 開発者サービスによる通知の委任を無効にする -->
+    <!--
+    <meta-data android:name= "delivery_metrics_exported_to_big_query_enabled" android:value="false"/>
+    -->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -58,7 +62,16 @@
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
             android:foregroundServiceType="dataSync|microphone"
-            tools:node="merge" />
+            tools:node="merge"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            />
+
+        <!--
+        <service
+            android:name="androidx.work.impl.background.gcm.WorkManagerGcmService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        -->
 
         <!--
         <receiver

@@ -52,7 +52,6 @@
             android:theme="@style/Theme.PressToTransmit">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -90,6 +89,20 @@
             android:name=".MyCancelReceiver"
             android:enabled="true"
             android:exported="false">
+        </receiver>
+        -->
+
+        <!--
+        <receiver android:name=".MyBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.PTT.down" />
+                <action android:name="android.intent.action.PTT.up" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.media.VOLUME_CHANGED_ACTION"/>
+            </intent-filter>
         </receiver>
         -->
     </application>

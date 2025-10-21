@@ -53,6 +53,8 @@ class MainActivity : ComponentActivity(), OutgoingTalkCallback {
             }
         }
 
+    val myBroadcastReceiver = MyBroadcastReceiver()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkAndRequestPermissions()
@@ -93,6 +95,27 @@ class MainActivity : ComponentActivity(), OutgoingTalkCallback {
         val filter = IntentFilter("com.example.presstotransmit.CANCEL")
         registerReceiver(receiver, filter)
          */
+
+        val filter = IntentFilter()
+        filter.addAction("android.intent.action.PTT.down")
+        filter.addAction("android.intent.action.PTT.up")
+        filter.addAction("android.intent.action.USER_PRESENT")
+        filter.addAction("com.phonemax.intent.action.PTT")
+        filter.addAction("com.phonemax.intent.action.PTT.down")
+        filter.addAction("com.phonemax.intent.action.PTT.up")
+        filter.addAction("cn.com.phonemax.intent.action.PTT")
+        filter.addAction("cn.com.phonemax.intent.action.PTT.down")
+        filter.addAction("cn.com.phonemax.intent.action.PTT.up")
+        filter.addAction("android.media.VOLUME_CHANGED_ACTION")
+        filter.addAction("android.intent.action.MAIN")
+        filter.addCategory("android.intent.category.LAUNCHER")
+        val listenToBroadcastsFromOtherApps = false
+        val receiverFlags = if (listenToBroadcastsFromOtherApps) {
+            ContextCompat.RECEIVER_EXPORTED
+        } else {
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        }
+        ContextCompat.registerReceiver(this, myBroadcastReceiver, filter, receiverFlags)
 
         enableEdgeToEdge()
         setContent {

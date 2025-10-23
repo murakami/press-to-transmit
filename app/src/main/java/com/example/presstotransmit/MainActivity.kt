@@ -13,14 +13,24 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -198,7 +208,43 @@ fun PressToTransmit(
     //activity: MainActivity,
     modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    var serverUrl by remember { mutableStateOf("wss://router-lite.voiceping.info") }
+    var company by remember { mutableStateOf("example") }
+    var userId by remember { mutableStateOf("from") }
+    var receiverId by remember { mutableStateOf("demo") }
+    var groupId by remember { mutableStateOf("demo") }
+    val textFieldModifier = Modifier.padding(1.dp)
     Column(modifier = modifier.padding(12.dp)) {
+        Row {
+            Text("Server URL:")
+            TextField(value = serverUrl, onValueChange = { newUrl ->
+                serverUrl = newUrl
+            }, modifier = textFieldModifier)
+        }
+        Row {
+            Text("Company:")
+            TextField(value = company, onValueChange = { newCompany ->
+                company = newCompany
+            }, modifier = textFieldModifier)
+        }
+        Row {
+            Text("User ID:")
+            TextField(value = userId, onValueChange = { newUserId ->
+                userId = newUserId
+            }, modifier = textFieldModifier)
+        }
+        Row {
+            Text("Receiver ID:")
+            TextField(value = receiverId, onValueChange = { newReceiverId ->
+                receiverId = newReceiverId
+            }, modifier = textFieldModifier)
+        }
+        Row {
+            Text("Group ID:")
+            TextField(value = groupId, onValueChange = { newGroupId ->
+                groupId = newGroupId
+            }, modifier = textFieldModifier)
+        }
         Button(
             onClick = {
                 val audioSource = AudioSourceConfig.getSource()

@@ -3,6 +3,7 @@ package com.example.presstotransmit
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
@@ -208,41 +209,57 @@ fun PressToTransmit(
     //activity: MainActivity,
     modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    var serverUrl by remember { mutableStateOf("wss://router-lite.voiceping.info") }
-    var company by remember { mutableStateOf("example") }
-    var userId by remember { mutableStateOf("from") }
-    var receiverId by remember { mutableStateOf("demo") }
-    var groupId by remember { mutableStateOf("demo") }
+    val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    var serverUrl by remember {
+        mutableStateOf(sharedPreferences.getString("serverUrl", "wss://router-lite.voiceping.info") ?: "wss://router-lite.voiceping.info")
+    }
+    var company by remember {
+        mutableStateOf(sharedPreferences.getString("company", "example") ?: "example")
+    }
+    var userId by remember {
+        mutableStateOf(sharedPreferences.getString("userId", "from") ?: "from")
+    }
+    var receiverId by remember {
+        mutableStateOf(sharedPreferences.getString("receiverId", "demo") ?: "demo")
+    }
+    var groupId by remember {
+        mutableStateOf(sharedPreferences.getString("groupId", "demo") ?: "demo")
+    }
     val textFieldModifier = Modifier.padding(1.dp)
     Column(modifier = modifier.padding(12.dp)) {
         Row {
             Text("Server URL:")
             TextField(value = serverUrl, onValueChange = { newUrl ->
                 serverUrl = newUrl
+                sharedPreferences.edit().putString("serverUrl", newUrl).apply()
             }, modifier = textFieldModifier)
         }
         Row {
             Text("Company:")
             TextField(value = company, onValueChange = { newCompany ->
                 company = newCompany
+                sharedPreferences.edit().putString("company", newCompany).apply()
             }, modifier = textFieldModifier)
         }
         Row {
             Text("User ID:")
             TextField(value = userId, onValueChange = { newUserId ->
                 userId = newUserId
+                sharedPreferences.edit().putString("userId", newUserId).apply()
             }, modifier = textFieldModifier)
         }
         Row {
             Text("Receiver ID:")
             TextField(value = receiverId, onValueChange = { newReceiverId ->
                 receiverId = newReceiverId
+                sharedPreferences.edit().putString("receiverId", newReceiverId).apply()
             }, modifier = textFieldModifier)
         }
         Row {
             Text("Group ID:")
             TextField(value = groupId, onValueChange = { newGroupId ->
                 groupId = newGroupId
+                sharedPreferences.edit().putString("groupId", newGroupId).apply()
             }, modifier = textFieldModifier)
         }
         Button(

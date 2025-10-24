@@ -4,6 +4,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.os.HandlerThread
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -28,6 +29,20 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.internal.throwMissingFieldException
+
+fun VoicePing.dispose() {
+    val threadSet = Thread.getAllStackTraces().keys
+    threadSet.forEach { thread ->
+        if (thread.name == "VoicePingThread") {
+            if (thread is HandlerThread) {
+                val voicePingThread = thread as HandlerThread
+                Log.d("VoicePing.dispose", voicePingThread.toString())
+                voicePingThread.quitSafely()
+            }
+        }
+    }
+}
 
 class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): CoroutineWorker(appContext, workerParams), OutgoingTalkCallback {
     private val doneChannel = Channel<Boolean>()
@@ -124,7 +139,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
             NotificationChannel(
                 channelId,
                 channelName,
-                NotificationManager.IMPORTANCE_MAX,
+                NotificationManager.IMPORTANCE_HIGH,
             ),
         )
     }
@@ -137,6 +152,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
             .build()
         val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
         Log.d(TAG, "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
+        VoicePing.dispose()
         VoicePing.init(applicationContext, "wss://router-lite.voiceping.info", audioParam)
         VoicePing.connect("demo", "bitz", object : ConnectCallback {
             override fun onConnected() {
@@ -162,6 +178,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
             .build()
         val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
         Log.d(TAG, "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
+        VoicePing.dispose()
         VoicePing.init(applicationContext, "wss://router-lite.voiceping.info", audioParam)
         VoicePing.connect("demo", "bitz", object : ConnectCallback {
             override fun onConnected() {

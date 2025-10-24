@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity(), OutgoingTalkCallback {
                 NotificationChannel(
                     channelId,
                     channelName,
-                    NotificationManager.IMPORTANCE_MAX,
+                    NotificationManager.IMPORTANCE_HIGH,
                 ),
             )
         }
@@ -217,13 +217,13 @@ fun PressToTransmit(
         mutableStateOf(sharedPreferences.getString("company", "example") ?: "example")
     }
     var userId by remember {
-        mutableStateOf(sharedPreferences.getString("userId", "from") ?: "from")
+        mutableStateOf(sharedPreferences.getString("userId", "user01") ?: "user01")
     }
     var receiverId by remember {
-        mutableStateOf(sharedPreferences.getString("receiverId", "demo") ?: "demo")
+        mutableStateOf(sharedPreferences.getString("receiverId", "user02") ?: "user02")
     }
     var groupId by remember {
-        mutableStateOf(sharedPreferences.getString("groupId", "demo") ?: "demo")
+        mutableStateOf(sharedPreferences.getString("groupId", "group01") ?: "group01")
     }
     val textFieldModifier = Modifier.padding(1.dp)
     Column(modifier = modifier.padding(12.dp)) {
@@ -270,14 +270,15 @@ fun PressToTransmit(
                     .build()
                 val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
                 Log.d("MainActivity", "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
-                VoicePing.init(context, "wss://router-lite.voiceping.info", audioParam)
+                VoicePing.dispose()
+                VoicePing.init(context, serverUrl, audioParam)
             }
         ) {
             Text("VoicePing.init")
         }
         Button(
             onClick = {
-                VoicePing.connect("demo", "bitz", object : ConnectCallback {
+                VoicePing.connect(userId, company, object : ConnectCallback {
                     override fun onConnected() {
                         Log.d("MainActivity", "onConnected")
                     }
@@ -293,7 +294,7 @@ fun PressToTransmit(
         Button(
             onClick = {
                 VoicePing.startTalking(
-                    receiverId = "efgh",
+                    receiverId = receiverId,
                     channelType = ChannelType.PRIVATE,
                     callback = context as OutgoingTalkCallback
                     //callback = null,
@@ -314,6 +315,7 @@ fun PressToTransmit(
                 val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
                 Log.d("MainActivity", "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
                 Log.d("MainActivity", "call VoicePing.init")
+                VoicePing.dispose()
                 VoicePing.init(context, "wss://router-lite.voiceping.info", audioParam)
                 Log.d("MainActivity", "call VoicePing.connect")
                 VoicePing.connect("demo", "bitz", object : ConnectCallback {

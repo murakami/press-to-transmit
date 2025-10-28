@@ -32,7 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
@@ -210,6 +212,7 @@ fun PressToTransmit(
     modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    val clipboardManager = LocalClipboardManager.current
     var serverUrl by remember {
         mutableStateOf(sharedPreferences.getString("serverUrl", "wss://router-lite.voiceping.info") ?: "wss://router-lite.voiceping.info")
     }
@@ -261,6 +264,25 @@ fun PressToTransmit(
                 groupId = newGroupId
                 sharedPreferences.edit().putString("groupId", newGroupId).apply()
             }, modifier = textFieldModifier)
+        }
+        Button(
+            onClick = {
+                FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Log.w("MainActivity", "Fetching FCM registration token failed", task.exception)
+                        return@OnCompleteListener
+                    }
+
+                    // Get new FCM registration token
+                    val token = task.result
+
+                    // Log
+                    Log.d("MainActivity", token)
+                    clipboardManager.setText(AnnotatedString(token))
+                })
+            }
+        ) {
+            Text("Copy FCM token")
         }
         Button(
             onClick = {

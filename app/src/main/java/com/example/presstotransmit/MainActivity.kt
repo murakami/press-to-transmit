@@ -269,7 +269,11 @@ fun PressToTransmit(
             onClick = {
                 FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
                     if (!task.isSuccessful) {
-                        Log.w("MainActivity", "Fetching FCM registration token failed", task.exception)
+                        Log.w(
+                            "MainActivity",
+                            "Fetching FCM registration token failed",
+                            task.exception
+                        )
                         return@OnCompleteListener
                     }
 
@@ -381,7 +385,7 @@ fun PressToTransmit(
 
 @Preview(showBackground = true)
 @Composable
-fun ressToTransmitPreview() {
+fun PressToTransmitPreview() {
     PressToTransmitTheme {
         PressToTransmit()
     }

@@ -51,7 +51,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
                 NotificationManager
 
     override suspend fun doWork(): Result {
-        Log.d(TAG, "doWork")
+        Log.d(TAG, "doWork: ${Thread.currentThread().name}(${Thread.currentThread().id})")
 
         connect()
         //startTalking()
@@ -152,16 +152,16 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
             .build()
         val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
         Log.d(TAG, "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
-        VoicePing.dispose()
-        VoicePing.init(applicationContext, "wss://router-lite.voiceping.info", audioParam)
-        VoicePing.connect("demo", "bitz", object : ConnectCallback {
+        disposeVoicePing()
+        initVoicePing(applicationContext, "wss://router-lite.voiceping.info", audioParam)
+        connect("demo", "bitz", object : ConnectCallback {
             override fun onConnected() {
                 Log.d(TAG, "onConnected")
             }
 
             override fun onFailed(exception: VoicePingException) {
                 Log.d(TAG, "onFailed")
-                VoicePing.disconnect(object : DisconnectCallback {
+                disconnect(object : DisconnectCallback {
                     override fun onDisconnected() {
                         Log.d(TAG, "onDisconnected")
                     }
@@ -178,12 +178,12 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
             .build()
         val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
         Log.d(TAG, "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
-        VoicePing.dispose()
-        VoicePing.init(applicationContext, "wss://router-lite.voiceping.info", audioParam)
-        VoicePing.connect("demo", "bitz", object : ConnectCallback {
+        disposeVoicePing()
+        initVoicePing(applicationContext, "wss://router-lite.voiceping.info", audioParam)
+        connect("demo", "bitz", object : ConnectCallback {
             override fun onConnected() {
                 Log.d(TAG, "onConnected")
-                VoicePing.startTalking(
+                startTalking(
                     receiverId = "efgh",
                     channelType = ChannelType.PRIVATE,
                     callback = null
@@ -192,7 +192,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
 
             override fun onFailed(exception: VoicePingException) {
                 Log.d(TAG, "onFailed")
-                VoicePing.disconnect(object : DisconnectCallback {
+                disconnect(object : DisconnectCallback {
                     override fun onDisconnected() {
                         Log.d(TAG, "onDisconnected")
                     }
@@ -203,8 +203,8 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
 
     private fun stopTalking() {
         Log.d(TAG, "stopTalking")
-        VoicePing.stopTalking()
-        VoicePing.disconnect(object : DisconnectCallback {
+        stopTalking()
+        disconnect(object : DisconnectCallback {
             override fun onDisconnected() {
                 Log.d(TAG, "onDisconnected")
             }
@@ -240,5 +240,65 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
             }
         }
          */
+
+        fun initVoicePing(context: Context, serverUrl: String, audioParam: AudioParam) {
+            GlobalScope.launch(Dispatchers.Main) {
+                VoicePing.init(context, serverUrl, audioParam)
+            }
+        }
+
+        fun disposeVoicePing() {
+            GlobalScope.launch(Dispatchers.Main) {
+                VoicePing.dispose()
+            }
+        }
+
+        fun connect(userId: String, company: String, callback: ConnectCallback) {
+            GlobalScope.launch(Dispatchers.Main) {
+                VoicePing.connect(userId, company, callback)
+            }
+        }
+
+        fun disconnect(callback: DisconnectCallback) {
+            GlobalScope.launch(Dispatchers.Main) {
+                VoicePing.disconnect(callback)
+            }
+        }
+
+        fun startTalking(receiverId: String, channelType: Int, callback: OutgoingTalkCallback?) {
+            GlobalScope.launch(Dispatchers.Main) {
+                VoicePing.startTalking(receiverId, channelType, callback)
+            }
+        }
+
+        fun stopTalking() {
+            GlobalScope.launch(Dispatchers.Main) {
+                VoicePing.stopTalking()
+            }
+        }
+
+        fun joinGroup(groupId: String) {
+            GlobalScope.launch(Dispatchers.Main) {
+                VoicePing.joinGroup(groupId)
+            }
+        }
+
+        fun leaveGroup(groupId: String) {
+            GlobalScope.launch(Dispatchers.Main) {
+                VoicePing.leaveGroup(groupId)
+            }
+        }
+
+        fun mute(targetId: String, channelType: Int) {
+            GlobalScope.launch(Dispatchers.Main) {
+                VoicePing.mute(targetId, channelType)
+            }
+        }
+
+        fun unmute(targetId: String, channelType: Int) {
+            GlobalScope.launch(Dispatchers.Main) {
+                VoicePing.unmute(targetId, channelType)
+            }
+        }
     }
 }

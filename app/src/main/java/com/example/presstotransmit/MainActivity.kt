@@ -296,15 +296,15 @@ fun PressToTransmit(
                     .build()
                 val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
                 Log.d("MainActivity", "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
-                VoicePing.dispose()
-                VoicePing.init(context, serverUrl, audioParam)
+                VoicePingWorker.disposeVoicePing()
+                VoicePingWorker.initVoicePing(context, serverUrl, audioParam)
             }
         ) {
-            Text("VoicePing.init")
+            Text("VoicePingWorker.initVoicePing")
         }
         Button(
             onClick = {
-                VoicePing.connect(userId, company, object : ConnectCallback {
+                VoicePingWorker.connect(userId, company, object : ConnectCallback {
                     override fun onConnected() {
                         Log.d("MainActivity", "onConnected")
                     }
@@ -315,11 +315,11 @@ fun PressToTransmit(
                 })
             }
         ) {
-            Text("VoicePing.connect")
+            Text("VoicePingWorker.connect")
         }
         Button(
             onClick = {
-                VoicePing.startTalking(
+                VoicePingWorker.startTalking(
                     receiverId = receiverId,
                     channelType = ChannelType.PRIVATE,
                     callback = context as OutgoingTalkCallback
@@ -329,7 +329,7 @@ fun PressToTransmit(
                 )
             }
         ) {
-            Text("VoicePing.startTalking")
+            Text("VoicePingWorker.startTalking")
         }
         Button(
             onClick = {
@@ -340,15 +340,15 @@ fun PressToTransmit(
                     .build()
                 val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
                 Log.d("MainActivity", "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
-                Log.d("MainActivity", "call VoicePing.init")
-                VoicePing.dispose()
-                VoicePing.init(context, "wss://router-lite.voiceping.info", audioParam)
-                Log.d("MainActivity", "call VoicePing.connect")
-                VoicePing.connect("demo", "bitz", object : ConnectCallback {
+                Log.d("MainActivity", "call VoicePingWorker.init")
+                VoicePingWorker.disposeVoicePing()
+                VoicePingWorker.initVoicePing(context, "wss://router-lite.voiceping.info", audioParam)
+                Log.d("MainActivity", "call VoicePingWorker.connect")
+                VoicePingWorker.connect("demo", "bitz", object : ConnectCallback {
                     override fun onConnected() {
                         Log.d("MainActivity", "onConnected")
-                        Log.d("MainActivity", "call VoicePing.startTalking")
-                        VoicePing.startTalking(
+                        Log.d("MainActivity", "call VoicePingWorker.startTalking")
+                        VoicePingWorker.startTalking(
                             receiverId = "efgh",
                             channelType = ChannelType.PRIVATE,
                             callback = context as OutgoingTalkCallback
@@ -365,20 +365,20 @@ fun PressToTransmit(
             Text("VoicePing: init & connect & startTalking")
         }
         Button(
-            onClick = { VoicePing.stopTalking() }
+            onClick = { VoicePingWorker.stopTalking() }
         ) {
-            Text("VoicePing.stopTalking")
+            Text("VoicePingWorker.stopTalking")
         }
         Button(
             onClick = {
-                VoicePing.disconnect(object : DisconnectCallback {
+                VoicePingWorker.disconnect(object : DisconnectCallback {
                     override fun onDisconnected() {
                         Log.d("MainActivity", "onDisconnected")
                     }
                 })
             }
         ) {
-            Text("VoicePing.disconnect")
+            Text("VoicePingWorker.disconnect")
         }
     }
 }

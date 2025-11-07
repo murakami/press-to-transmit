@@ -44,7 +44,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun handleIntent(intent: Intent) {
-        Log.d(TAG, "handleIntent")
+        Log.d(TAG, "handleIntent: ${Thread.currentThread().name}(${Thread.currentThread().id})")
         super.handleIntent(intent)
         if (intent.getExtras() == null) return
 

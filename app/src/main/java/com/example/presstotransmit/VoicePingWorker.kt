@@ -242,63 +242,103 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
          */
 
         fun initVoicePing(context: Context, serverUrl: String, audioParam: AudioParam) {
+            Log.d(TAG, "initVoicePing: begin")
             GlobalScope.launch(Dispatchers.Main) {
+                Log.d(TAG, "VoicePing.init: begin")
                 VoicePing.init(context, serverUrl, audioParam)
+                Log.d(TAG, "VoicePing.init: end")
             }
+            Log.d(TAG, "initVoicePing: end")
         }
 
         fun disposeVoicePing() {
+            Log.d(TAG, "disposeVoicePing: begin")
             GlobalScope.launch(Dispatchers.Main) {
+                Log.d(TAG, "VoicePing.dispose: begin")
                 VoicePing.dispose()
+                Log.d(TAG, "VoicePing.dispose: end")
             }
+            Log.d(TAG, "disposeVoicePing: end")
         }
 
         fun connect(userId: String, company: String, callback: ConnectCallback) {
+            Log.d(TAG, "connect: begin")
             GlobalScope.launch(Dispatchers.Main) {
+                Log.d(TAG, "VoicePing.connect: begin")
                 VoicePing.connect(userId, company, callback)
+                Log.d(TAG, "VoicePing.connect: end")
             }
+            Log.d(TAG, "connect: end")
         }
 
         fun disconnect(callback: DisconnectCallback) {
+            Log.d(TAG, "disconnect: begin")
             GlobalScope.launch(Dispatchers.Main) {
+                Log.d(TAG, "VoicePing.disconnect: begin")
                 VoicePing.disconnect(callback)
+                Log.d(TAG, "VoicePing.disconnect: end")
             }
+            Log.d(TAG, "disconnect: end")
         }
 
         fun startTalking(receiverId: String, channelType: Int, callback: OutgoingTalkCallback?) {
+            Log.d(TAG, "startTalking: begin")
             GlobalScope.launch(Dispatchers.Main) {
+                Log.d(TAG, "VoicePing.startTalking: begin")
                 VoicePing.startTalking(receiverId, channelType, callback)
+                Log.d(TAG, "VoicePing.startTalking: end")
             }
+            Log.d(TAG, "startTalking: end")
         }
 
         fun stopTalking() {
+            Log.d(TAG, "stopTalking: begin")
             GlobalScope.launch(Dispatchers.Main) {
+                Log.d(TAG, "VoicePing.stopTalking: begin")
                 VoicePing.stopTalking()
+                Log.d(TAG, "VoicePing.stopTalking: end")
             }
+            Log.d(TAG, "stopTalking: end")
         }
 
         fun joinGroup(groupId: String) {
+            Log.d(TAG, "joinGroup: begin")
             GlobalScope.launch(Dispatchers.Main) {
+                Log.d(TAG, "VoicePing.joinGroup: begin")
                 VoicePing.joinGroup(groupId)
+                Log.d(TAG, "VoicePing.joinGroup: end")
             }
+            Log.d(TAG, "joinGroup: end")
         }
 
         fun leaveGroup(groupId: String) {
+            Log.d(TAG, "leaveGroup: begin")
             GlobalScope.launch(Dispatchers.Main) {
+                Log.d(TAG, "VoicePing.leaveGroup: begin")
                 VoicePing.leaveGroup(groupId)
+                Log.d(TAG, "VoicePing.leaveGroup: end")
             }
+            Log.d(TAG, "leaveGroup: end")
         }
 
         fun mute(targetId: String, channelType: Int) {
+            Log.d(TAG, "mute: begin")
             GlobalScope.launch(Dispatchers.Main) {
+                Log.d(TAG, "VoicePing.mute: begin")
                 VoicePing.mute(targetId, channelType)
+                Log.d(TAG, "VoicePing.mute: end")
             }
+            Log.d(TAG, "mute: end")
         }
 
         fun unmute(targetId: String, channelType: Int) {
+            Log.d(TAG, "unmute: begin")
             GlobalScope.launch(Dispatchers.Main) {
+                Log.d(TAG, "VoicePing.unmute: begin")
                 VoicePing.unmute(targetId, channelType)
+                Log.d(TAG, "VoicePing.unmute: end")
             }
+            Log.d(TAG, "unmute: end")
         }
     }
 }

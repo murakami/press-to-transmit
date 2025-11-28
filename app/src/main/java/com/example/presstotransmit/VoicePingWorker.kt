@@ -153,7 +153,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
         Log.d(TAG, "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
         disposeVoicePing()
-        initVoicePing(applicationContext, "wss://router-lite.voiceping.info", audioParam)
+        initVoicePing(applicationContext, SERVER_URL, audioParam)
         connect("demo", "bitz", object : ConnectCallback {
             override fun onConnected() {
                 Log.d(TAG, "onConnected")
@@ -179,7 +179,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
         Log.d(TAG, "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
         disposeVoicePing()
-        initVoicePing(applicationContext, "wss://router-lite.voiceping.info", audioParam)
+        initVoicePing(applicationContext, SERVER_URL, audioParam)
         connect("demo", "bitz", object : ConnectCallback {
             override fun onConnected() {
                 Log.d(TAG, "onConnected")
@@ -231,6 +231,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         private const val TAG = "VoicePingWorker"
         private const val NOTIFICATION_ID = 999
         //private val doneChannel = Channel<Boolean>()
+        public const val SERVER_URL = "wss://router-lite.voiceping.info"
 
         /*
         public fun decline() {

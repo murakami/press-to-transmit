@@ -26,7 +26,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .build()
         val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
         Log.d("MyFirebaseMessagingService", "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
-        VoicePing.init(this, "wss://router-lite.voiceping.info", audioParam)
+        VoicePing.init(this, VoicePingWorker.SERVER_URL, audioParam)
         VoicePing.connect("demo", "bitz", object : ConnectCallback {
             override fun onConnected() {
                 Log.d("MyFirebaseMessagingService", "onConnected")

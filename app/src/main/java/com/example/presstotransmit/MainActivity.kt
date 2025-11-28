@@ -214,7 +214,7 @@ fun PressToTransmit(
     val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
     val clipboardManager = LocalClipboardManager.current
     var serverUrl by remember {
-        mutableStateOf(sharedPreferences.getString("serverUrl", "wss://router-lite.voiceping.info") ?: "wss://router-lite.voiceping.info")
+        mutableStateOf(sharedPreferences.getString("serverUrl", VoicePingWorker.SERVER_URL) ?: VoicePingWorker.SERVER_URL)
     }
     var company by remember {
         mutableStateOf(sharedPreferences.getString("company", "example") ?: "example")
@@ -342,7 +342,7 @@ fun PressToTransmit(
                 Log.d("MainActivity", "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
                 Log.d("MainActivity", "call VoicePingWorker.init")
                 VoicePingWorker.disposeVoicePing()
-                VoicePingWorker.initVoicePing(context, "wss://router-lite.voiceping.info", audioParam)
+                VoicePingWorker.initVoicePing(context, VoicePingWorker.SERVER_URL, audioParam)
                 Log.d("MainActivity", "call VoicePingWorker.connect")
                 VoicePingWorker.connect("demo", "bitz", object : ConnectCallback {
                     override fun onConnected() {

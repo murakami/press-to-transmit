@@ -20,6 +20,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.ui.input.pointer.pointerInput
+//import androidx.compose.ui.input.pointer.consume
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -39,6 +44,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.example.presstotransmit.ui.theme.PressToTransmitTheme
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
@@ -288,6 +296,7 @@ fun PressToTransmit(
         ) {
             Text("Copy FCM token")
         }
+        /*
         Button(
             onClick = {
                 val audioSource = AudioSourceConfig.getSource()
@@ -302,6 +311,8 @@ fun PressToTransmit(
         ) {
             Text("VoicePingWorker.initVoicePing")
         }
+         */
+        /*
         Button(
             onClick = {
                 VoicePingWorker.connect(userId, company, object : ConnectCallback {
@@ -317,6 +328,21 @@ fun PressToTransmit(
         ) {
             Text("VoicePingWorker.connect")
         }
+         */
+        Button(
+            onClick = {
+
+            }
+        ) {
+            val voicePingWorkRequest: WorkRequest =
+            OneTimeWorkRequestBuilder<VoicePingWorker>()
+                .build()
+            WorkManager
+                .getInstance(LocalContext.current)
+                .enqueue(voicePingWorkRequest)
+            Text("create VoicePingWorker")
+        }
+        /**/
         Button(
             onClick = {
                 VoicePingWorker.startTalking(
@@ -331,6 +357,8 @@ fun PressToTransmit(
         ) {
             Text("VoicePingWorker.startTalking")
         }
+        /**/
+        /*
         Button(
             onClick = {
                 Log.d("MainActivity", "VoicePing: init & connect & startTalking: begin")
@@ -364,11 +392,42 @@ fun PressToTransmit(
         ) {
             Text("VoicePing: init & connect & startTalking")
         }
+         */
+        /**/
         Button(
             onClick = { VoicePingWorker.stopTalking() }
         ) {
             Text("VoicePingWorker.stopTalking")
         }
+        /**/
+        Button(
+            onClick = { /* 何もしない - pointerInputで処理 */ },
+            modifier = Modifier
+                .pointerInput(Unit) {
+                    awaitEachGesture {
+                        // ボタンが押されたとき
+                        val down = awaitFirstDown()
+                        down.consume()
+                        Log.d("MainActivity", "PTT Button Pressed - Starting talking")
+                        VoicePingWorker.startTalking(
+                            receiverId = receiverId,
+                            channelType = ChannelType.PRIVATE,
+                            callback = context as OutgoingTalkCallback
+                        )
+
+                        // ボタンが離されるまで待つ
+                        val up = waitForUpOrCancellation()
+                        if (up != null) {
+                            up.consume()
+                            Log.d("MainActivity", "PTT Button Released - Stopping talking")
+                            VoicePingWorker.stopTalking()
+                        }
+                    }
+                }
+        ) {
+            Text("PTT (Press to Talk)")
+        }
+        /*
         Button(
             onClick = {
                 VoicePingWorker.disconnect(object : DisconnectCallback {
@@ -379,6 +438,14 @@ fun PressToTransmit(
             }
         ) {
             Text("VoicePingWorker.disconnect")
+        }
+         */
+        Button(
+            onClick = {
+
+            }
+        ) {
+            Text("dispose VoicePingWorker")
         }
     }
 }

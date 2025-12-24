@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.IntentFilter
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -84,6 +85,7 @@ class MainActivity : ComponentActivity(), OutgoingTalkCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkAndRequestPermissions()
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create channel to show notifications.
@@ -342,6 +344,7 @@ fun PressToTransmit(
                 Log.d("MainActivity", "create VoicePingWorker")
                 val voicePingWorkRequest: WorkRequest =
                     OneTimeWorkRequestBuilder<VoicePingWorker>()
+                        .addTag("VoicePing")
                         .build()
                 WorkManager
                     .getInstance(context)
@@ -350,7 +353,7 @@ fun PressToTransmit(
         ) {
             Text("create VoicePingWorker")
         }
-        /**/
+        /*
         Button(
             onClick = {
                 Log.d("MainActivity", "VoicePingWorker.startTalking")
@@ -366,7 +369,7 @@ fun PressToTransmit(
         ) {
             Text("VoicePingWorker.startTalking")
         }
-        /**/
+        */
         /*
         Button(
             onClick = {
@@ -402,7 +405,7 @@ fun PressToTransmit(
             Text("VoicePing: init & connect & startTalking")
         }
          */
-        /**/
+        /*
         Button(
             onClick = {
                 Log.d("MainActivity", "VoicePingWorker.stopTalking")
@@ -411,12 +414,28 @@ fun PressToTransmit(
         ) {
             Text("VoicePingWorker.stopTalking")
         }
-        /**/
+        */
+        Button(
+            onClick = {
+                Log.d("MainActivity", "VoicePingWorker.stopTalking")
+                VoicePingWorker.joinGroup(groupId)
+            }
+        ) {
+            Text("VoicePingWorker.joinGroup")
+        }
+        Button(
+            onClick = {
+                Log.d("MainActivity", "VoicePingWorker.stopTalking")
+                VoicePingWorker.leaveGroup(groupId)
+            }
+        ) {
+            Text("VoicePingWorker.leaveGroup")
+        }
         // PTT Button: BoxベースのカスタムボタンでpointerInputを使用
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
+                .height(32.dp)
                 .padding(horizontal = 8.dp, vertical = 4.dp)
                 .clip(RoundedCornerShape(4.dp))
                 .background(Color(0xFF6200EE))
@@ -429,6 +448,9 @@ fun PressToTransmit(
                             receiverId = receiverId,
                             channelType = ChannelType.PRIVATE,
                             callback = context as OutgoingTalkCallback
+                            //callback = null,
+                            //destinationPath = null,
+                            //recorder = null
                         )
 
                         // ボタンが離されるまで待つ
@@ -439,10 +461,46 @@ fun PressToTransmit(
                         }
                     }
                 },
-            contentAlignment = Alignment.Center
+            //contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "PTT (Press to Talk)",
+                text = "PTT (Private)",
+                color = Color.White
+            )
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(32.dp)
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color(0xFF6200EE))
+                .pointerInput(Unit) {
+                    awaitEachGesture {
+                        // ボタンが押されたとき
+                        awaitFirstDown()
+                        Log.d("MainActivity", "PTT Button Pressed - Starting talking")
+                        VoicePingWorker.startTalking(
+                            receiverId = groupId,
+                            channelType = ChannelType.GROUP,
+                            callback = context as OutgoingTalkCallback
+                            //callback = null,
+                            //destinationPath = null,
+                            //recorder = null
+                        )
+
+                        // ボタンが離されるまで待つ
+                        val up = waitForUpOrCancellation()
+                        if (up != null) {
+                            Log.d("MainActivity", "PTT Button Released - Stopping talking")
+                            VoicePingWorker.stopTalking()
+                        }
+                    }
+                },
+            //contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "PTT (Group)",
                 color = Color.White
             )
         }
@@ -463,6 +521,7 @@ fun PressToTransmit(
         Button(
             onClick = {
                 Log.d("MainActivity", "dispose VoicePingWorker")
+                VoicePingWorker.dispose(context)
             }
         ) {
             Text("dispose VoicePingWorker")

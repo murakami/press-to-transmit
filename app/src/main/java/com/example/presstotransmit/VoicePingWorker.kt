@@ -81,12 +81,14 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
     }
      */
 
+    /*
     fun decline() {
         Log.d(TAG, "decline")
         GlobalScope.launch {
             doneChannel.send(true)
         }
     }
+     */
 
     // Creates an instance of ForegroundInfo which can be used to update the
     // ongoing notification.
@@ -241,9 +243,12 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
             }
         }
          */
+        fun dispose(context: Context) {
+            WorkManager.getInstance(context).cancelAllWorkByTag("VoicePing")
+        }
 
         fun initVoicePing(context: Context, serverUrl: String, audioParam: AudioParam) {
-            Log.d(TAG, "initVoicePing: begin")
+            Log.d(TAG, "initVoicePing($serverUrl): begin")
             GlobalScope.launch(Dispatchers.Main) {
                 Log.d(TAG, "VoicePing.init: begin")
                 VoicePing.init(context, serverUrl, audioParam)
@@ -263,7 +268,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         }
 
         fun connect(userId: String, company: String, callback: ConnectCallback) {
-            Log.d(TAG, "connect: begin")
+            Log.d(TAG, "connect($userId, $company): begin")
             GlobalScope.launch(Dispatchers.Main) {
                 Log.d(TAG, "VoicePing.connect: begin")
                 VoicePing.connect(userId, company, callback)
@@ -283,7 +288,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         }
 
         fun startTalking(receiverId: String, channelType: Int, callback: OutgoingTalkCallback?) {
-            Log.d(TAG, "startTalking: begin")
+            Log.d(TAG, "startTalking($receiverId, $channelType): begin")
             GlobalScope.launch(Dispatchers.Main) {
                 Log.d(TAG, "VoicePing.startTalking: begin")
                 VoicePing.startTalking(receiverId, channelType, callback)
@@ -303,7 +308,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         }
 
         fun joinGroup(groupId: String) {
-            Log.d(TAG, "joinGroup: begin")
+            Log.d(TAG, "joinGroup($groupId): begin")
             GlobalScope.launch(Dispatchers.Main) {
                 Log.d(TAG, "VoicePing.joinGroup: begin")
                 VoicePing.joinGroup(groupId)
@@ -313,7 +318,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         }
 
         fun leaveGroup(groupId: String) {
-            Log.d(TAG, "leaveGroup: begin")
+            Log.d(TAG, "leaveGroup($groupId): begin")
             GlobalScope.launch(Dispatchers.Main) {
                 Log.d(TAG, "VoicePing.leaveGroup: begin")
                 VoicePing.leaveGroup(groupId)

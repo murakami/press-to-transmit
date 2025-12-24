@@ -15,14 +15,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 //import androidx.compose.ui.input.pointer.consume
 import androidx.compose.material3.Button
@@ -275,6 +280,7 @@ fun PressToTransmit(
         }
         Button(
             onClick = {
+                Log.d("MainActivity", "Copy FCM token")
                 FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
                     if (!task.isSuccessful) {
                         Log.w(
@@ -299,6 +305,7 @@ fun PressToTransmit(
         /*
         Button(
             onClick = {
+                Log.d("MainActivity", "VoicePingWorker.initVoicePing")
                 val audioSource = AudioSourceConfig.getSource()
                 val audioParam = AudioParam.Builder()
                     .setAudioSource(audioSource)
@@ -315,6 +322,7 @@ fun PressToTransmit(
         /*
         Button(
             onClick = {
+                Log.d("MainActivity", "VoicePingWorker.connect")
                 VoicePingWorker.connect(userId, company, object : ConnectCallback {
                     override fun onConnected() {
                         Log.d("MainActivity", "onConnected")
@@ -331,20 +339,21 @@ fun PressToTransmit(
          */
         Button(
             onClick = {
-
+                Log.d("MainActivity", "create VoicePingWorker")
+                val voicePingWorkRequest: WorkRequest =
+                    OneTimeWorkRequestBuilder<VoicePingWorker>()
+                        .build()
+                WorkManager
+                    .getInstance(context)
+                    .enqueue(voicePingWorkRequest)
             }
         ) {
-            val voicePingWorkRequest: WorkRequest =
-            OneTimeWorkRequestBuilder<VoicePingWorker>()
-                .build()
-            WorkManager
-                .getInstance(LocalContext.current)
-                .enqueue(voicePingWorkRequest)
             Text("create VoicePingWorker")
         }
         /**/
         Button(
             onClick = {
+                Log.d("MainActivity", "VoicePingWorker.startTalking")
                 VoicePingWorker.startTalking(
                     receiverId = receiverId,
                     channelType = ChannelType.PRIVATE,
@@ -395,19 +404,26 @@ fun PressToTransmit(
          */
         /**/
         Button(
-            onClick = { VoicePingWorker.stopTalking() }
+            onClick = {
+                Log.d("MainActivity", "VoicePingWorker.stopTalking")
+                VoicePingWorker.stopTalking()
+            }
         ) {
             Text("VoicePingWorker.stopTalking")
         }
         /**/
-        Button(
-            onClick = { /* 何もしない - pointerInputで処理 */ },
+        // PTT Button: BoxベースのカスタムボタンでpointerInputを使用
+        Box(
             modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color(0xFF6200EE))
                 .pointerInput(Unit) {
                     awaitEachGesture {
                         // ボタンが押されたとき
-                        val down = awaitFirstDown()
-                        down.consume()
+                        awaitFirstDown()
                         Log.d("MainActivity", "PTT Button Pressed - Starting talking")
                         VoicePingWorker.startTalking(
                             receiverId = receiverId,
@@ -418,18 +434,22 @@ fun PressToTransmit(
                         // ボタンが離されるまで待つ
                         val up = waitForUpOrCancellation()
                         if (up != null) {
-                            up.consume()
                             Log.d("MainActivity", "PTT Button Released - Stopping talking")
                             VoicePingWorker.stopTalking()
                         }
                     }
-                }
+                },
+            contentAlignment = Alignment.Center
         ) {
-            Text("PTT (Press to Talk)")
+            Text(
+                text = "PTT (Press to Talk)",
+                color = Color.White
+            )
         }
         /*
         Button(
             onClick = {
+                Log.d("MainActivity", "VoicePingWorker.disconnect")
                 VoicePingWorker.disconnect(object : DisconnectCallback {
                     override fun onDisconnected() {
                         Log.d("MainActivity", "onDisconnected")
@@ -442,7 +462,7 @@ fun PressToTransmit(
          */
         Button(
             onClick = {
-
+                Log.d("MainActivity", "dispose VoicePingWorker")
             }
         ) {
             Text("dispose VoicePingWorker")

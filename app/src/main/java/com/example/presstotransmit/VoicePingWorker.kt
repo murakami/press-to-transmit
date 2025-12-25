@@ -52,9 +52,21 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
 
     override suspend fun doWork(): Result {
         Log.d(TAG, "doWork: ${Thread.currentThread().name}(${Thread.currentThread().id})")
+        var serverUrl = inputData.getString("serverUrl")
+        if (serverUrl == null) {
+            serverUrl = SERVER_URL
+        }
+        var company = inputData.getString("company")
+        if (company == null) {
+            company = COMPANY
+        }
+        var userId = inputData.getString("userId")
+        if (userId == null) {
+            userId = USER_ID
+        }
 
-        connect()
-        //startTalking()
+        connect(serverUrl, company, userId)
+        //startTalking(serverUrl, company, userId)
         setForeground(createForegroundInfo())
         runCatching {
             val done = doneChannel.receive()
@@ -146,7 +158,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         )
     }
 
-    private fun connect() {
+    private fun connect(serverUrl: String, company: String, userId: String) {
         Log.d(TAG, "connect")
         val audioSource = AudioSourceConfig.getSource()
         val audioParam = AudioParam.Builder()
@@ -155,8 +167,8 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
         Log.d(TAG, "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
         disposeVoicePing()
-        initVoicePing(applicationContext, SERVER_URL, audioParam)
-        connect("demo", "bitz", object : ConnectCallback {
+        initVoicePing(applicationContext, serverUrl, audioParam)
+        connect(userId, company, object : ConnectCallback {
             override fun onConnected() {
                 Log.d(TAG, "onConnected")
             }
@@ -172,7 +184,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         })
     }
 
-    private fun startTalking() {
+    private fun startTalking(serverUrl: String, company: String, userId: String) {
         Log.d(TAG, "startTalking")
         val audioSource = AudioSourceConfig.getSource()
         val audioParam = AudioParam.Builder()
@@ -181,8 +193,8 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         val audioSourceText = AudioSourceConfig.getAudioSourceText(audioParam.audioSource)
         Log.d(TAG, "Manufacturer: ${Build.MANUFACTURER}, audio source: $audioSourceText")
         disposeVoicePing()
-        initVoicePing(applicationContext, SERVER_URL, audioParam)
-        connect("demo", "bitz", object : ConnectCallback {
+        initVoicePing(applicationContext, serverUrl, audioParam)
+        connect(userId, company, object : ConnectCallback {
             override fun onConnected() {
                 Log.d(TAG, "onConnected")
                 startTalking(
@@ -234,6 +246,8 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         private const val NOTIFICATION_ID = 999
         //private val doneChannel = Channel<Boolean>()
         public const val SERVER_URL = "wss://router-lite.voiceping.info"
+        public const val COMPANY = "example"
+        public const val USER_ID = "user01"
 
         /*
         public fun decline() {

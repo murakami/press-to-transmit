@@ -244,8 +244,8 @@ fun PressToTransmit(
     var groupId by remember {
         mutableStateOf(sharedPreferences.getString("groupId", "group01") ?: "group01")
     }
-    val textFieldModifier = Modifier.padding(1.dp)
-    Column(modifier = modifier.padding(12.dp)) {
+    val textFieldModifier = Modifier.padding(0.dp)
+    Column(modifier = modifier.padding(0.dp)) {
         Row {
             Text("Server URL:")
             TextField(value = serverUrl, onValueChange = { newUrl ->
@@ -438,78 +438,81 @@ fun PressToTransmit(
         ) {
             Text("VoicePingWorker.leaveGroup")
         }
-        // PTT Button: BoxベースのカスタムボタンでpointerInputを使用
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(32.dp)
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(Color(0xFF6200EE))
-                .pointerInput(Unit) {
-                    awaitEachGesture {
-                        // ボタンが押されたとき
-                        awaitFirstDown()
-                        Log.d("MainActivity", "PTT Button Pressed - Starting talking")
-                        VoicePingWorker.startTalking(
-                            receiverId = receiverId,
-                            channelType = ChannelType.PRIVATE,
-                            callback = context as OutgoingTalkCallback
-                            //callback = null,
-                            //destinationPath = null,
-                            //recorder = null
-                        )
+        Row {
+            Box(
+                modifier = Modifier
+                    //.fillMaxWidth()
+                    //.height(32.dp)
+                    .padding(12.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color(0xFF6200EE))
+                    .pointerInput(Unit) {
+                        awaitEachGesture {
+                            // ボタンが押されたとき
+                            awaitFirstDown()
+                            Log.d("MainActivity", "PTT Button Pressed - Starting talking")
+                            VoicePingWorker.startTalking(
+                                receiverId = receiverId,
+                                channelType = ChannelType.PRIVATE,
+                                callback = context as OutgoingTalkCallback
+                                //callback = null,
+                                //destinationPath = null,
+                                //recorder = null
+                            )
 
-                        // ボタンが離されるまで待つ
-                        val up = waitForUpOrCancellation()
-                        if (up != null) {
-                            Log.d("MainActivity", "PTT Button Released - Stopping talking")
-                            VoicePingWorker.stopTalking()
+                            // ボタンが離されるまで待つ
+                            val up = waitForUpOrCancellation()
+                            if (up != null) {
+                                Log.d("MainActivity", "PTT Button Released - Stopping talking")
+                                VoicePingWorker.stopTalking()
+                            }
                         }
-                    }
-                },
-            //contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "PTT (Private)",
-                color = Color.White
-            )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(32.dp)
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(Color(0xFF6200EE))
-                .pointerInput(Unit) {
-                    awaitEachGesture {
-                        // ボタンが押されたとき
-                        awaitFirstDown()
-                        Log.d("MainActivity", "PTT Button Pressed - Starting talking")
-                        VoicePingWorker.startTalking(
-                            receiverId = groupId,
-                            channelType = ChannelType.GROUP,
-                            callback = context as OutgoingTalkCallback
-                            //callback = null,
-                            //destinationPath = null,
-                            //recorder = null
-                        )
+                    },
+                //contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "PTT (Private)",
+                    color = Color.White,
+                    modifier = Modifier.padding(12.dp)
+                )
+            }
+            Box(
+                modifier = Modifier
+                    //.fillMaxWidth()
+                    //.height(32.dp)
+                    .padding(12.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color(0xFF6200EE))
+                    .pointerInput(Unit) {
+                        awaitEachGesture {
+                            // ボタンが押されたとき
+                            awaitFirstDown()
+                            Log.d("MainActivity", "PTT Button Pressed - Starting talking")
+                            VoicePingWorker.startTalking(
+                                receiverId = groupId,
+                                channelType = ChannelType.GROUP,
+                                callback = context as OutgoingTalkCallback
+                                //callback = null,
+                                //destinationPath = null,
+                                //recorder = null
+                            )
 
-                        // ボタンが離されるまで待つ
-                        val up = waitForUpOrCancellation()
-                        if (up != null) {
-                            Log.d("MainActivity", "PTT Button Released - Stopping talking")
-                            VoicePingWorker.stopTalking()
+                            // ボタンが離されるまで待つ
+                            val up = waitForUpOrCancellation()
+                            if (up != null) {
+                                Log.d("MainActivity", "PTT Button Released - Stopping talking")
+                                VoicePingWorker.stopTalking()
+                            }
                         }
-                    }
-                },
-            //contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "PTT (Group)",
-                color = Color.White
-            )
+                    },
+                //contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "PTT (Group)",
+                    color = Color.White,
+                    modifier = Modifier.padding(12.dp)
+                )
+            }
         }
         /*
         Button(

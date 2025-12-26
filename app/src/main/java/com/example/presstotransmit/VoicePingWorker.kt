@@ -8,11 +8,15 @@ import android.os.HandlerThread
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.work.Worker
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.ForegroundInfo
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
+import com.google.common.util.concurrent.ListenableFuture
 import com.smartwalkie.voicepingsdk.VoicePing
 import com.smartwalkie.voicepingsdk.callback.ConnectCallback
 import com.smartwalkie.voicepingsdk.callback.DisconnectCallback
@@ -21,15 +25,12 @@ import com.smartwalkie.voicepingsdk.listener.AudioRecorder
 import com.smartwalkie.voicepingsdk.listener.OutgoingTalkCallback
 import com.smartwalkie.voicepingsdk.model.AudioParam
 import com.smartwalkie.voicepingsdk.model.ChannelType
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.internal.throwMissingFieldException
+import java.util.concurrent.ExecutionException
+
 
 fun VoicePing.dispose() {
     val threadSet = Thread.getAllStackTraces().keys
@@ -73,14 +74,14 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         }.onFailure { throwable ->
             Log.d(TAG, "onFailure")
             //doneChannel.send(true)
-            stopTalking()
+            //stopTalking()
         }
         /*
         runBlocking {
             val done = doneChannel.receive()
         }
          */
-        stopTalking()
+        //stopTalking()
 
         // Indicate whether the work finished successfully with the Result
         return Result.success()
@@ -249,6 +250,48 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         public const val COMPANY = "example"
         public const val USER_ID = "user01"
 
+        private fun isWorkerEnqueued(context: Context, tag: String): Boolean {
+            val future = WorkManager.getInstance(context).getWorkInfosByTag(tag)
+            try {
+                for (workInfo in future.get()!!) {
+                    if (workInfo.state != WorkInfo.State.CANCELLED) {
+                        Log.d(TAG, "exist VoicePingWorker:" + workInfo)
+                        return true
+                    }
+                }
+            } catch (e: ExecutionException) {
+                e.printStackTrace()
+                return false
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+                return false
+            }
+            Log.d(TAG, "not exist VoicePingWorker")
+            return false
+        }
+
+        fun create(context: Context) {
+            Log.d(TAG, "create")
+            //if (isWorkerEnqueued(context, "VoicePing")) return
+            val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+            val serverUrl = sharedPreferences.getString("serverUrl", SERVER_URL) ?: SERVER_URL
+            val company = sharedPreferences.getString("company", COMPANY) ?: COMPANY
+            val userId = sharedPreferences.getString("userId", USER_ID) ?: USER_ID
+            val data = Data.Builder().apply {
+                putString("serverUrl", serverUrl)
+                putString("company", company)
+                putString("userId", userId)
+            }.build()
+            val voicePingWorkRequest: WorkRequest =
+                OneTimeWorkRequestBuilder<VoicePingWorker>()
+                    .setInputData(data)
+                    .addTag("VoicePing")
+                    .build()
+            WorkManager
+                .getInstance(context)
+                .enqueue(voicePingWorkRequest)
+        }
+
         /*
         public fun decline() {
             Log.d(TAG, "decline")
@@ -258,6 +301,7 @@ class VoicePingWorker (appContext: Context, workerParams: WorkerParameters): Cor
         }
          */
         fun dispose(context: Context) {
+            Log.d(TAG, "dispose")
             WorkManager.getInstance(context).cancelAllWorkByTag("VoicePing")
         }
 

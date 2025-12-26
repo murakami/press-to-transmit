@@ -3,9 +3,11 @@ package com.example.presstotransmit
 import android.app.ActivityOptions
 import android.app.PendingIntent
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
@@ -50,12 +52,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         Log.d(TAG, "handleIntent: extras: ${intent.getExtras()}")
         //startTalking()
-        val voicePingWorkRequest: WorkRequest =
-            OneTimeWorkRequestBuilder<VoicePingWorker>()
-                .build()
-        WorkManager
-            .getInstance(application)
-            .enqueue(voicePingWorkRequest)
+        VoicePingWorker.create(this)
         /*
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

@@ -343,19 +343,7 @@ fun PressToTransmit(
         Button(
             onClick = {
                 Log.d("MainActivity", "create VoicePingWorker")
-                val data = Data.Builder().apply {
-                    putString("serverUrl", serverUrl)
-                    putString("company", company)
-                    putString("userId", userId)
-                }.build()
-                val voicePingWorkRequest: WorkRequest =
-                    OneTimeWorkRequestBuilder<VoicePingWorker>()
-                        .setInputData(data)
-                        .addTag("VoicePing")
-                        .build()
-                WorkManager
-                    .getInstance(context)
-                    .enqueue(voicePingWorkRequest)
+                VoicePingWorker.create(context)
             }
         ) {
             Text("create VoicePingWorker")

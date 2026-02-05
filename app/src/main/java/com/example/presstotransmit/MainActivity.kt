@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -219,6 +220,16 @@ class MainActivity : ComponentActivity(), OutgoingTalkCallback {
 
     override fun onOutgoingTalkError(e: VoicePingException) {
         Log.d("MainActivity", "onOutgoingTalkError")
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        Log.d("MainActivity", "onKeyDown: keyCode(" + keyCode + ") event(" + event + ")")
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        Log.d("MainActivity", "onKeyUp: keyCode(" + keyCode + ") event(" + event + ")")
+        return super.onKeyUp(keyCode, event)
     }
 }
 

@@ -138,6 +138,24 @@ class MainActivity : ComponentActivity(), OutgoingTalkCallback {
         filter.addAction("cn.com.phonemax.intent.action.PTT.up")
         filter.addAction("android.media.VOLUME_CHANGED_ACTION")
         filter.addAction("android.intent.action.MAIN")
+
+        filter.addAction("com.sonim.intent.action.PTT_KEY_DOWN")
+        filter.addAction("com.sonim.intent.action.PTT_KEY_UP")
+        filter.addAction("com.sonim.intent.action.YELLOW_KEY_DOWN")
+        filter.addAction("com.sonim.intent.action.YELLOW_KEY_UP")
+        filter.addAction("com.sonim.intent.action.SOS_KEY_DOWN")
+        filter.addAction("com.sonim.intent.action.SOS_KEY_UP")
+        filter.addAction("com.sonim.intent.action.GREEN_KEY_DOWN")
+        filter.addAction("com.sonim.intent.action.GREEN_KEY_UP")
+
+        filter.addAction("com.symbol.button.L1")
+        filter.addAction("com.symbol.button.R2")
+        filter.addAction("com.symbol.button.A")
+
+        filter.addAction("com.samsung.android.knox.intent.action.HARD_KEY_REPORT")
+        filter.addAction("com.samsung.android.knox.intent.action.SIDE_PRESS")
+        filter.addAction("com.samsung.android.knox.intent.action.SIDE_RELEASE")
+
         filter.addCategory("android.intent.category.LAUNCHER")
         val listenToBroadcastsFromOtherApps = false
         val receiverFlags = if (listenToBroadcastsFromOtherApps) {
